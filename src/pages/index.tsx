@@ -1,16 +1,20 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 
 import type { NextPage } from 'next'
 import * as THREE from 'three'
 
 const Home: NextPage = () => {
-  const init = () => {
+  const mountRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
     const w = 960
     const h = 540
 
-    const renderer = new THREE.WebGLRenderer({
-      canvas: document.querySelector('#threejs-area') as HTMLCanvasElement,
-    })
+    const renderer = new THREE.WebGLRenderer()
+
+    const elm = mountRef.current
+
+    elm?.appendChild(renderer.domElement)
 
     renderer.setPixelRatio(window.devicePixelRatio)
     renderer.setSize(w, h)
@@ -47,16 +51,16 @@ const Home: NextPage = () => {
     }
 
     tick()
-  }
 
-  useEffect(() => {
-    init()
+    return () => {
+      elm?.removeChild(renderer.domElement)
+    }
   }, [])
 
   return (
     <div className="bg-indigo-900">
       <h1 className="text-9xl text-amber-300 font-bold">Hello Three.js</h1>
-      <canvas id="threejs-area" />
+      <div ref={mountRef} />
     </div>
   )
 }
