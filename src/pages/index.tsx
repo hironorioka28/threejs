@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 
 import type { NextPage } from 'next'
+import NextLink from 'next/link'
 import * as THREE from 'three'
 
 const Home: NextPage = () => {
@@ -58,8 +59,15 @@ const Home: NextPage = () => {
   }, [])
 
   return (
-    <div className="bg-indigo-900">
-      <h1 className="text-9xl text-amber-300 font-bold">Hello Three.js</h1>
+    <div className="bg-indigo-900 space-y-8 p-8 text-amber-300">
+      <h1 className="text-9xl font-bold">Hello Three.js</h1>
+      <ul className="list-disc">
+        <li>
+          <NextLink href="/materials">
+            <a>Materials</a>
+          </NextLink>
+        </li>
+      </ul>
       <div ref={mountRef} />
     </div>
   )
