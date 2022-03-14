@@ -1,21 +1,10 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 
 import type { NextPage } from 'next'
 import * as THREE from 'three'
 
 const Materials: NextPage = () => {
-  const [boxX, setBoxX] = useState<number>(1)
-
   const mountRef = useRef<HTMLDivElement>(null)
-
-  const increaseBoxX = () => {
-    setBoxX(boxX + 1)
-  }
-  const decreaseBoxX = () => {
-    if (boxX > 1) {
-      setBoxX(boxX - 1)
-    }
-  }
 
   useEffect(() => {
     const renderer = new THREE.WebGLRenderer()
@@ -32,7 +21,7 @@ const Materials: NextPage = () => {
     const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerWidth, 1, 10000)
     camera.position.set(0, 0, 10)
 
-    const geometry = new THREE.BoxGeometry(boxX, 1, 1)
+    const geometry = new THREE.BoxGeometry(1, 1, 1)
     const material = new THREE.MeshStandardMaterial({ color: 0x00ff00 })
 
     const cube = new THREE.Mesh(geometry, material)
@@ -42,13 +31,25 @@ const Materials: NextPage = () => {
     light.position.set(1, 1, 1)
     scene.add(light)
 
-    const onWindowResize = function () {
+    const onWindowResize = () => {
       camera.aspect = window.innerWidth / window.innerHeight
       camera.updateProjectionMatrix()
       renderer.setSize(window.innerWidth, window.innerHeight)
     }
 
-    window.addEventListener('resize', onWindowResize, false)
+    const debounce = (fn: () => void, ms: number) => {
+      let timer = 0
+      return () => {
+        window.clearTimeout(timer)
+        timer = window.setTimeout(() => {
+          fn()
+        }, ms)
+      }
+    }
+
+    const debouncedOnWindowResize = debounce(onWindowResize, 500)
+
+    window.addEventListener('resize', debouncedOnWindowResize, false)
 
     const animate = () => {
       cube.rotation.y += 0.01
@@ -62,25 +63,12 @@ const Materials: NextPage = () => {
 
     return () => {
       elm?.removeChild(renderer.domElement)
-      window.removeEventListener('resize', onWindowResize, false)
+      window.removeEventListener('resize', debouncedOnWindowResize, false)
     }
-  }, [boxX])
-
-  // TODO: なんか立方体がゆがむ。ウィンドウサイズをちょっと動かすと直る。アスペクト比が関係していそうだ
+  }, [])
 
   return (
     <div className="relative">
-      <div className=" absolute top-4 left-4 text-white">
-        <div className=" flex space-x-8">
-          <button className="text-2xl" onClick={increaseBoxX}>
-            +
-          </button>
-          <button className="text-2xl" onClick={decreaseBoxX}>
-            -
-          </button>
-          <p className="text-2xl">(X,Y,Z) = ({boxX},1,1)</p>
-        </div>
-      </div>
       <div ref={mountRef} />
     </div>
   )
