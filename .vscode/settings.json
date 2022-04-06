@@ -8,6 +8,11 @@
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true
   },
+  "editor.quickSuggestions": {
+    "other": "on",
+    "comments": "off",
+    "strings": true
+  },
   "[markdown]": {
     "files.trimTrailingWhitespace": false
   }

@@ -67,6 +67,11 @@ const Home: NextPage = () => {
             <a>Materials</a>
           </NextLink>
         </li>
+        <li>
+          <NextLink href="/oreilly">
+            <a>O&apos;reilly</a>
+          </NextLink>
+        </li>
       </ul>
       <div ref={mountRef} />
     </div>
