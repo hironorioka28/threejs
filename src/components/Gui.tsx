@@ -10,6 +10,7 @@ type Props = {
 const Gui = ({ setRot, setBounce }: Props): JSX.Element => {
   useEffect(() => {
     const gui = new dat.GUI()
+
     const controls = {
       rotationSpeed: 0.02,
       bouncingSpeed: 0.03,
