@@ -3,9 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 9999",
     "build": "next build",
     "start": "next start",
+    "prod": "next build && next start -p 9999",
     "lint": "next lint"
   },
   "dependencies": {
