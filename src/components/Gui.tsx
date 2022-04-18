@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { memo, useEffect } from 'react'
 
 import * as dat from 'dat.gui'
 
@@ -7,7 +7,8 @@ type Props = {
   setBounce: React.Dispatch<React.SetStateAction<number>>
 }
 
-const Gui = ({ setRot, setBounce }: Props): JSX.Element => {
+// eslint-disable-next-line react/display-name
+const Gui = memo(({ setRot, setBounce }: Props): JSX.Element => {
   useEffect(() => {
     const gui = new dat.GUI()
 
@@ -16,15 +17,8 @@ const Gui = ({ setRot, setBounce }: Props): JSX.Element => {
       bouncingSpeed: 0.03,
     }
 
-    const rotController = gui.add(controls, 'rotationSpeed', 0, 0.5)
-    const bounceController = gui.add(controls, 'bouncingSpeed', 0, 0.5)
-
-    rotController.onChange(() => {
-      setRot(rotController.getValue())
-    })
-    bounceController.onChange(() => {
-      setBounce(bounceController.getValue())
-    })
+    gui.add(controls, 'rotationSpeed', 0, 0.5).onChange((v) => setRot(v))
+    gui.add(controls, 'bouncingSpeed', 0, 0.5).onChange((v) => setBounce(v))
 
     return () => {
       gui.destroy()
@@ -32,6 +26,6 @@ const Gui = ({ setRot, setBounce }: Props): JSX.Element => {
   }, [setRot, setBounce])
 
   return <></>
-}
+})
 
 export default Gui
