@@ -1,33 +1,37 @@
 import { useRef, useEffect, useMemo } from 'react'
 
-import dat from 'dat.gui'
-import Stats from 'stats.js'
+import * as dat from 'dat.gui'
 import * as THREE from 'three'
 
-import { useAnimationFrame, useDebounce } from '@hooks/utils'
+import { myStats, useAnimationFrame, useDebounce } from '@hooks/utils'
 
 const Canvas = (): JSX.Element => {
-  const mountRef = useRef<HTMLDivElement>(null)
+  const sceneMountRef = useRef<HTMLDivElement>(null)
   const statsMountRef = useRef<HTMLDivElement>(null)
 
   const rotationSpeedRef = useRef<number>(0.02)
   const bounceRef = useRef<number>(0.03)
   const stepRef = useRef<number>(0)
 
-  const renderer = new THREE.WebGLRenderer()
   const scene = new THREE.Scene()
+
   const camera = new THREE.PerspectiveCamera(
     45,
     window.innerWidth / (window.innerHeight - 48),
     0.1,
     1000,
   )
-  const axes = new THREE.AxesHelper(20)
+  camera.position.x = -30
+  camera.position.y = 40
+  camera.position.z = 30
+  camera.lookAt(scene.position)
 
+  const renderer = new THREE.WebGLRenderer()
   renderer.setClearColor(new THREE.Color(0xeeeeee))
   renderer.setSize(window.innerWidth, window.innerHeight - 48)
   renderer.shadowMap.enabled = true
 
+  const axes = new THREE.AxesHelper(20)
   scene.add(axes)
 
   const planeGeometory = new THREE.PlaneGeometry(60, 20)
@@ -41,7 +45,7 @@ const Canvas = (): JSX.Element => {
   scene.add(plane)
 
   const cubeGeometory = new THREE.BoxGeometry(4, 4, 4)
-  const cubeMaterial = new THREE.MeshLambertMaterial({ color: 0xff0000 })
+  const cubeMaterial = new THREE.MeshLambertMaterial({ color: Math.random() * 0xffffff })
   const cube = new THREE.Mesh(cubeGeometory, cubeMaterial)
   cube.position.x = -4
   cube.position.y = 3
@@ -63,17 +67,6 @@ const Canvas = (): JSX.Element => {
   spotLight.castShadow = true
   scene.add(spotLight)
 
-  camera.position.x = -30
-  camera.position.y = 40
-  camera.position.z = 30
-  camera.lookAt(scene.position)
-
-  const stats = new Stats()
-  stats.showPanel(0)
-  stats.dom.style.position = 'absolute'
-  stats.dom.style.left = '0px'
-  stats.dom.style.top = '48px'
-
   const onResize = () => {
     camera.aspect = window.innerWidth / (window.innerHeight - 48)
     camera.updateProjectionMatrix()
@@ -81,6 +74,8 @@ const Canvas = (): JSX.Element => {
   }
   const debouncedOnResize = useDebounce(onResize, 200)
   window.addEventListener('resize', debouncedOnResize, false)
+
+  const stats = myStats()
 
   useAnimationFrame(() => {
     stats.update()
@@ -104,18 +99,18 @@ const Canvas = (): JSX.Element => {
   }, [])
 
   useEffect(() => {
-    const mount = mountRef.current
+    const sceneMount = sceneMountRef.current
     const statsMount = statsMountRef.current
     const gui = new dat.GUI()
 
     gui.add(datGuiControls, 'rotationSpeed', 0, 0.5).onChange((v) => (rotationSpeedRef.current = v))
     gui.add(datGuiControls, 'bounce', 0, 0.5).onChange((v) => (bounceRef.current = v))
 
-    mount?.appendChild(renderer.domElement)
+    sceneMount?.appendChild(renderer.domElement)
     statsMount?.appendChild(stats.dom)
 
     return () => {
-      mount?.removeChild(renderer.domElement)
+      sceneMount?.removeChild(renderer.domElement)
       statsMount?.removeChild(stats.dom)
       gui.destroy()
     }
@@ -123,7 +118,7 @@ const Canvas = (): JSX.Element => {
 
   return (
     <>
-      <div ref={mountRef} />
+      <div ref={sceneMountRef} />
       <div ref={statsMountRef} />
     </>
   )
