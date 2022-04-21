@@ -1,6 +1,6 @@
 import { useRef, useEffect, useMemo } from 'react'
 
-import dat from 'dat.gui'
+import * as dat from 'dat.gui'
 import * as THREE from 'three'
 
 import { myStats, useAnimationFrame, useDebounce } from '@hooks/utils'
@@ -67,8 +67,6 @@ const Canvas = (): JSX.Element => {
   spotLight.castShadow = true
   scene.add(spotLight)
 
-  const stats = myStats()
-
   const onResize = () => {
     camera.aspect = window.innerWidth / (window.innerHeight - 48)
     camera.updateProjectionMatrix()
@@ -76,6 +74,8 @@ const Canvas = (): JSX.Element => {
   }
   const debouncedOnResize = useDebounce(onResize, 200)
   window.addEventListener('resize', debouncedOnResize, false)
+
+  const stats = myStats()
 
   useAnimationFrame(() => {
     stats.update()
