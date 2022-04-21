@@ -19,3 +19,15 @@ export const useAnimationFrame = (callback: () => void) => {
     }
   }, [animate])
 }
+export const useDebounce = (callback: () => void, ms: number) => {
+  const timerRef = useRef<number>(0)
+
+  const debounce = useCallback(() => {
+    window.clearTimeout(timerRef.current)
+    timerRef.current = window.setTimeout(() => {
+      callback()
+    }, ms)
+  }, [callback, ms])
+
+  return debounce
+}
