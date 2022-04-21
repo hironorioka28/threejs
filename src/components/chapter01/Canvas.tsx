@@ -1,28 +1,9 @@
-<<<<<<< HEAD
-import { useRef, useEffect /* , useState */, useMemo } from 'react'
-=======
 import { useRef, useEffect, useMemo } from 'react'
->>>>>>> 28568996bfed908b22821b55972313b67dd23162
 
 import dat from 'dat.gui'
 import Stats from 'stats.js'
 import * as THREE from 'three'
 
-<<<<<<< HEAD
-import { useAnimationFrame, useGui } from '@hooks/utils'
-
-const Canvas = (): JSX.Element => {
-  const sceneRef = useRef<HTMLDivElement>(null)
-  const statsRef = useRef<HTMLDivElement>(null)
-  const step = useRef<number>(0)
-  const rotRef = useRef(0)
-
-  const stats = new Stats()
-  stats.showPanel(0)
-  stats.dom.style.position = 'absolute'
-  stats.dom.style.left = '0px'
-  stats.dom.style.top = '48px'
-=======
 import { useAnimationFrame, useDebounce } from '@hooks/utils'
 
 const Canvas = (): JSX.Element => {
@@ -32,7 +13,6 @@ const Canvas = (): JSX.Element => {
   const rotationSpeedRef = useRef<number>(0.02)
   const bounceRef = useRef<number>(0.03)
   const stepRef = useRef<number>(0)
->>>>>>> 28568996bfed908b22821b55972313b67dd23162
 
   const renderer = new THREE.WebGLRenderer()
   const scene = new THREE.Scene()
@@ -92,9 +72,6 @@ const Canvas = (): JSX.Element => {
   camera.position.z = 30
   camera.lookAt(scene.position)
 
-<<<<<<< HEAD
-  const { rotationSpeed: rot, bouncingSpeed: bounce } = useGui(0.02, 0.03)
-=======
   const stats = new Stats()
   stats.showPanel(0)
   stats.dom.style.position = 'absolute'
@@ -108,21 +85,10 @@ const Canvas = (): JSX.Element => {
   }
   const debouncedOnResize = useDebounce(onResize, 200)
   window.addEventListener('resize', debouncedOnResize, false)
->>>>>>> 28568996bfed908b22821b55972313b67dd23162
 
   useAnimationFrame(() => {
     stats.update()
 
-<<<<<<< HEAD
-    rotRef.current += rot
-    cube.rotation.x = rotRef.current
-    cube.rotation.y = rotRef.current
-    cube.rotation.z = rotRef.current
-
-    step.current += bounce
-    sphere.position.x = 20 + 10 * Math.cos(step.current)
-    sphere.position.y = 2 + 10 * Math.abs(Math.sin(step.current))
-=======
     cube.rotation.x += rotationSpeedRef.current
     cube.rotation.y += rotationSpeedRef.current
     cube.rotation.z += rotationSpeedRef.current
@@ -130,7 +96,6 @@ const Canvas = (): JSX.Element => {
     stepRef.current += bounceRef.current
     sphere.position.x = 20 + 10 * Math.cos(stepRef.current)
     sphere.position.y = 2 + 10 * Math.abs(Math.sin(stepRef.current))
->>>>>>> 28568996bfed908b22821b55972313b67dd23162
 
     renderer.render(scene, camera)
   })
@@ -158,21 +123,12 @@ const Canvas = (): JSX.Element => {
       statsMount?.removeChild(stats.dom)
       gui.destroy()
     }
-<<<<<<< HEAD
-  }, [renderer.domElement, stats.dom])
-
-  return (
-    <>
-      <div ref={sceneRef} />
-      <div ref={statsRef} />
-=======
   }, [renderer.domElement, stats.dom, datGuiControls])
 
   return (
     <>
       <div ref={mountRef} />
       <div ref={statsMountRef} />
->>>>>>> 28568996bfed908b22821b55972313b67dd23162
     </>
   )
 }
