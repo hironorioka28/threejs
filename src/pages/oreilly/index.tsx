@@ -12,9 +12,29 @@ const Oreilly: NextPage = () => {
           </NextLink>
         </li>
         <li>
-          <NextLink href={'/oreilly/chapter02'}>
-            <a className="text-teal-700">Chapter 02</a>
-          </NextLink>
+          <p className="text-gray-700">Chapter 02</p>
+          <ul className="list-inside list-decimal space-y-4 mt-4">
+            <li>
+              <NextLink href={'/oreilly/2-1-basic-scene'}>
+                <a className="text-teal-700">basic-scene</a>
+              </NextLink>
+            </li>
+            <li>
+              <NextLink href={'/oreilly/2-2-foggy-scene'}>
+                <a className="text-teal-700">foggy-scene</a>
+              </NextLink>
+            </li>
+            <li>
+              <NextLink href={'/oreilly/2-3-forced-materials'}>
+                <a className="text-teal-700">forced-materials</a>
+              </NextLink>
+            </li>
+            <li>
+              <NextLink href={'/oreilly/2-4-geometries'}>
+                <a className="text-teal-700">geometries</a>
+              </NextLink>
+            </li>
+          </ul>
         </li>
       </ul>
     </div>

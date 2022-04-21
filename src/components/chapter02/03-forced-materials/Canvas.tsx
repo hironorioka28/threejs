@@ -48,6 +48,9 @@ const Canvas = (): JSX.Element => {
   spotLight.castShadow = true
   scene.add(spotLight)
 
+  /* Overridematerial */
+  scene.overrideMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff })
+
   const onResize = () => {
     camera.aspect = window.innerWidth / (window.innerHeight - 48)
     camera.updateProjectionMatrix()
