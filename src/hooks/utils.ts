@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useEffect /* , useMemo */ } from 'react'
+import { useState, useRef, useCallback, useEffect } from 'react'
 
 import * as dat from 'dat.gui'
 import Stats from 'stats.js'
@@ -50,4 +50,17 @@ export const myStats = () => {
   s.dom.style.top = '48px'
 
   return s
+}
+
+export const useDebounce = (callback: () => void, ms: number) => {
+  const timerRef = useRef<number>(0)
+
+  const debounce = useCallback(() => {
+    window.clearTimeout(timerRef.current)
+    timerRef.current = window.setTimeout(() => {
+      callback()
+    }, ms)
+  }, [callback, ms])
+
+  return debounce
 }
