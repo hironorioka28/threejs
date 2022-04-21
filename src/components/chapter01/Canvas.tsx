@@ -41,11 +41,7 @@ const Canvas = (): JSX.Element => {
   scene.add(plane)
 
   const cubeGeometory = new THREE.BoxGeometry(4, 4, 4)
-  const cubeMaterial = useMemo(() => {
-    return new THREE.MeshLambertMaterial({
-      color: /* 0xff0000 */ Math.random() * 0xffffff,
-    })
-  }, [])
+  const cubeMaterial = new THREE.MeshLambertMaterial({ color: Math.random() * 0xffffff })
   const cube = new THREE.Mesh(cubeGeometory, cubeMaterial)
   cube.position.x = -4
   cube.position.y = 3
