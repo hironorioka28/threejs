@@ -7,9 +7,8 @@ import { useGui } from './useGui'
 import { myStats, useAnimationFrame } from '@hooks/utils'
 
 const Canvas = (): JSX.Element => {
-  console.log('Parent')
-  const sceneRef = useRef<HTMLDivElement>(null)
-  const statsRef = useRef<HTMLDivElement>(null)
+  const sceneMountRef = useRef<HTMLDivElement>(null)
+  const statsMountRef = useRef<HTMLDivElement>(null)
   // const rotRef = useRef(0)
 
   const [rotationSpeed, setRotationSpeed] = useState<number>(0)
@@ -54,8 +53,6 @@ const Canvas = (): JSX.Element => {
   const stats = myStats()
 
   useGui(scene, planeGeometory, setRotationSpeed, setSceneInfo)
-  console.log('at Canvas.tsx', rotationSpeed)
-  console.log('SCENE', sceneInfo.children)
 
   useAnimationFrame(() => {
     stats.update()
@@ -66,25 +63,22 @@ const Canvas = (): JSX.Element => {
         e.rotation.x += /* rotRef.current */ rotationSpeed
         e.rotation.y += /* rotRef.current */ rotationSpeed
         e.rotation.z += /* rotRef.current */ rotationSpeed
-        console.log(rotationSpeed, e.rotation.x)
       }
     })
-
-    console.log('animated', sceneInfo.children)
 
     renderer.render(sceneInfo, camera)
     // renderer.render(scene, camera)
   })
 
   useEffect(() => {
-    const sceneElm = sceneRef.current
-    sceneElm?.appendChild(renderer.domElement)
-    const statsElm = statsRef.current
-    statsElm?.appendChild(stats.dom)
+    const sceneMount = sceneMountRef.current
+    sceneMount?.appendChild(renderer.domElement)
+    const statsMount = statsMountRef.current
+    statsMount?.appendChild(stats.dom)
 
     return () => {
-      sceneElm?.removeChild(renderer.domElement)
-      statsElm?.removeChild(stats.dom)
+      sceneMount?.removeChild(renderer.domElement)
+      statsMount?.removeChild(stats.dom)
     }
   }, [renderer.domElement, stats.dom])
 
@@ -98,8 +92,8 @@ const Canvas = (): JSX.Element => {
 
   return (
     <>
-      <div ref={sceneRef} />
-      <div ref={statsRef} />
+      <div ref={sceneMountRef} />
+      <div ref={statsMountRef} />
     </>
   )
 }

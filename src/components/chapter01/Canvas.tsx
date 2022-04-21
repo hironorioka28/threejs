@@ -7,7 +7,7 @@ import * as THREE from 'three'
 import { useAnimationFrame, useDebounce } from '@hooks/utils'
 
 const Canvas = (): JSX.Element => {
-  const mountRef = useRef<HTMLDivElement>(null)
+  const sceneMountRef = useRef<HTMLDivElement>(null)
   const statsMountRef = useRef<HTMLDivElement>(null)
 
   const rotationSpeedRef = useRef<number>(0.02)
@@ -104,18 +104,18 @@ const Canvas = (): JSX.Element => {
   }, [])
 
   useEffect(() => {
-    const mount = mountRef.current
+    const sceneMount = sceneMountRef.current
     const statsMount = statsMountRef.current
     const gui = new dat.GUI()
 
     gui.add(datGuiControls, 'rotationSpeed', 0, 0.5).onChange((v) => (rotationSpeedRef.current = v))
     gui.add(datGuiControls, 'bounce', 0, 0.5).onChange((v) => (bounceRef.current = v))
 
-    mount?.appendChild(renderer.domElement)
+    sceneMount?.appendChild(renderer.domElement)
     statsMount?.appendChild(stats.dom)
 
     return () => {
-      mount?.removeChild(renderer.domElement)
+      sceneMount?.removeChild(renderer.domElement)
       statsMount?.removeChild(stats.dom)
       gui.destroy()
     }
@@ -123,7 +123,7 @@ const Canvas = (): JSX.Element => {
 
   return (
     <>
-      <div ref={mountRef} />
+      <div ref={sceneMountRef} />
       <div ref={statsMountRef} />
     </>
   )
