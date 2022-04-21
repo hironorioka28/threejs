@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useMemo } from 'react'
+import { useRef, useEffect, useMemo } from 'react'
 
 import dat from 'dat.gui'
 import Stats from 'stats.js'
