@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef } from 'react'
 import * as dat from 'dat.gui'
 import * as THREE from 'three'
 
-import { myStats, useAnimationFrame, useDebounce } from '@hooks/utils'
+import { myStats, useAnimationFrame, useWindowResize } from '@hooks/utils'
 
 const Canvas = (): JSX.Element => {
   const sceneMountRef = useRef<HTMLDivElement>(null)
@@ -52,15 +52,9 @@ const Canvas = (): JSX.Element => {
   scene.fog = new THREE.Fog(0xffffff, 0.015, 100)
   // scene.fog = new THREE.FogExp2(0xffffff, 0.015)
 
-  const onResize = () => {
-    camera.aspect = window.innerWidth / (window.innerHeight - 48)
-    camera.updateProjectionMatrix()
-    renderer.setSize(window.innerWidth, window.innerHeight - 48)
-  }
-  const debouncedOnResize = useDebounce(onResize, 200)
-  window.addEventListener('resize', debouncedOnResize, false)
-
   const stats = myStats()
+
+  useWindowResize(camera, renderer, 500)
 
   useAnimationFrame(() => {
     stats.update()

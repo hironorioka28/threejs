@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef } from 'react'
 import * as dat from 'dat.gui'
 import * as THREE from 'three'
 
-import { myStats, useAnimationFrame, useDebounce } from '@hooks/utils'
+import { myStats, useAnimationFrame, useWindowResize } from '@hooks/utils'
 
 const Canvas = (): JSX.Element => {
   const sceneMountRef = useRef<HTMLDivElement>(null)
@@ -51,15 +51,9 @@ const Canvas = (): JSX.Element => {
   /* Overridematerial */
   scene.overrideMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff })
 
-  const onResize = () => {
-    camera.aspect = window.innerWidth / (window.innerHeight - 48)
-    camera.updateProjectionMatrix()
-    renderer.setSize(window.innerWidth, window.innerHeight - 48)
-  }
-  const debouncedOnResize = useDebounce(onResize, 200)
-  window.addEventListener('resize', debouncedOnResize, false)
-
   const stats = myStats()
+
+  useWindowResize(camera, renderer, 500)
 
   useAnimationFrame(() => {
     stats.update()

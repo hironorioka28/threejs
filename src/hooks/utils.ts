@@ -64,3 +64,23 @@ export const useDebounce = (callback: () => void, ms: number) => {
 
   return debounce
 }
+
+export const useWindowResize = (
+  camera: THREE.PerspectiveCamera,
+  renderer: THREE.WebGLRenderer,
+  interval: number,
+) => {
+  const onResize = () => {
+    camera.aspect = window.innerWidth / (window.innerHeight - 48)
+    camera.updateProjectionMatrix()
+    renderer.setSize(window.innerWidth, window.innerHeight - 48)
+  }
+
+  const debounced = useDebounce(onResize, interval)
+  useEffect(() => {
+    window.addEventListener('resize', debounced, false)
+    return () => {
+      window.removeEventListener('resize', debounced, false)
+    }
+  }, [debounced])
+}

@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef } from 'react'
 import * as dat from 'dat.gui'
 import * as THREE from 'three'
 
-import { myStats, useAnimationFrame, useDebounce } from '@hooks/utils'
+import { myStats, useAnimationFrame, useWindowResize } from '@hooks/utils'
 
 const Canvas = (): JSX.Element => {
   const sceneMountRef = useRef<HTMLDivElement>(null)
@@ -15,7 +15,7 @@ const Canvas = (): JSX.Element => {
     return new THREE.Scene()
   }, [])
 
-  const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1)
+  const camera = new THREE.PerspectiveCamera(45, window.innerWidth / (window.innerHeight - 48), 0.1)
   camera.position.x = -30
   camera.position.y = 40
   camera.position.z = 30
@@ -48,22 +48,9 @@ const Canvas = (): JSX.Element => {
   spotLight.castShadow = true
   scene.add(spotLight)
 
-  /* Fog */
-  // scene.fog = new THREE.Fog(0xffffff, 0.015, 100)
-  // scene.fog = new THREE.FogExp2(0xffffff, 0.015)
-
-  /* Overridematerial */
-  // scene.overrideMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff })
-
-  const onResize = () => {
-    camera.aspect = window.innerWidth / (window.innerHeight - 48)
-    camera.updateProjectionMatrix()
-    renderer.setSize(window.innerWidth, window.innerHeight - 48)
-  }
-  const debouncedOnResize = useDebounce(onResize, 200)
-  window.addEventListener('resize', debouncedOnResize, false)
-
   const stats = myStats()
+
+  useWindowResize(camera, renderer, 500)
 
   useAnimationFrame(() => {
     stats.update()
