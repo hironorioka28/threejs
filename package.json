@@ -15,7 +15,8 @@
     "react": "18.0.0",
     "react-dom": "18.0.0",
     "stats.js": "^0.17.0",
-    "three": "^0.139.2"
+    "three": "^0.139.2",
+    "unstated-next": "^1.1.0"
   },
   "devDependencies": {
     "@types/dat.gui": "^0.7.7",

@@ -68,6 +68,11 @@ const Home: NextPage = () => {
           </NextLink>
         </li>
         <li>
+          <NextLink href="/dattest">
+            <a>Dat Test</a>
+          </NextLink>
+        </li>
+        <li>
           <NextLink href="/oreilly">
             <a>O&apos;reilly</a>
           </NextLink>
