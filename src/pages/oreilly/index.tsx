@@ -34,6 +34,11 @@ const Oreilly: NextPage = () => {
                 <a className="text-teal-700">geometries</a>
               </NextLink>
             </li>
+            <li>
+              <NextLink href={'/oreilly/2-5-custom-geometry'}>
+                <a className="text-teal-700">custom-geometry</a>
+              </NextLink>
+            </li>
           </ul>
         </li>
       </ul>
