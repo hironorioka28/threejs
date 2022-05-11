@@ -1,5 +1,6 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 
+import * as dat from 'dat.gui'
 import * as THREE from 'three'
 import * as SceneUtils from 'three/examples/jsm/utils/SceneUtils'
 
@@ -24,6 +25,9 @@ const Canvas = (): JSX.Element => {
   renderer.setSize(window.innerWidth, window.innerHeight - 48)
   renderer.shadowMap.enabled = true
 
+  const axes = new THREE.AxesHelper(7)
+  scene.add(axes)
+
   const planeGeometory = new THREE.PlaneGeometry(60, 40, 1, 1)
   const planeMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff })
   const plane = new THREE.Mesh(planeGeometory, planeMaterial)
@@ -40,61 +44,83 @@ const Canvas = (): JSX.Element => {
   scene.add(spotLight)
 
   const geom = new THREE.BufferGeometry()
-  const vertices = [
-    { pos: [1, 3, 1], norm: [1, 0, 0], uv: [1, 1] }, // 0
-    { pos: [1, 3, -1], norm: [1, 0, 0], uv: [1, 0] }, // 1
-    { pos: [1, -1, 1], norm: [1, 0, 0], uv: [0, 1] }, // 2
-    { pos: [1, -1, -1], norm: [1, 0, 0], uv: [0, 0] }, // 3
 
-    { pos: [-1, 3, -1], norm: [0, 1, 0], uv: [1, 0] }, // 4
-    { pos: [-1, 3, 1], norm: [0, 1, 0], uv: [1, 1] }, // 5
-    { pos: [1, 3, 1], norm: [0, 1, 0], uv: [0, 1] }, // 6 (0)
-    { pos: [1, 3, -1], norm: [0, 1, 0], uv: [0, 0] }, // 7 (1)
+  const points = [
+    new THREE.Vector3(1, -1, -1), // 3
+    new THREE.Vector3(1, 3, 1), // 0
+    new THREE.Vector3(1, -1, 1), // 2
 
-    { pos: [-1, -1, -1], norm: [-1, 0, 0], uv: [1, 0] }, // 8 (6)
-    { pos: [-1, -1, 1], norm: [-1, 0, 0], uv: [1, 1] }, // 9 (7)
-    { pos: [-1, 3, 1], norm: [-1, 0, 0], uv: [0, 1] }, // 10 (5)
-    { pos: [-1, 3, -1], norm: [-1, 0, 0], uv: [0, 0] }, // 11 (4)
+    new THREE.Vector3(1, 3, -1), // 1
+    new THREE.Vector3(1, 3, 1), // 0
+    new THREE.Vector3(1, -1, -1), // 3
 
-    { pos: [1, -1, 1], norm: [0, -1, 0], uv: [1, 1] }, // 12 (2)
-    { pos: [-1, -1, 1], norm: [0, -1, 0], uv: [0, 1] }, // 13 (7)
-    { pos: [-1, -1, -1], norm: [0, -1, 0], uv: [0, 0] }, // 14 (6)
-    { pos: [1, -1, -1], norm: [0, -1, 0], uv: [1, 0] }, // 15 (3)
+    new THREE.Vector3(-1, 3, 1), // 5
+    new THREE.Vector3(1, 3, 1), // 0
+    new THREE.Vector3(-1, 3, -1), // 4
 
-    { pos: [1, -1, 1], norm: [0, 0, 1], uv: [0, 0] }, // 16 (2)
-    { pos: [1, 3, 1], norm: [0, 0, 1], uv: [1, 0] }, // 17 (0)
-    { pos: [-1, 3, 1], norm: [0, 0, 1], uv: [1, 1] }, // 18 (5)
-    { pos: [-1, -1, 1], norm: [0, 0, 1], uv: [0, 1] }, // 19 (7)
+    new THREE.Vector3(-1, 3, -1), // 4
+    new THREE.Vector3(1, 3, 1), // 0
+    new THREE.Vector3(1, 3, -1), // 1
 
-    { pos: [1, -1, -1], norm: [0, 0, -1], uv: [1, 0] }, // 20 (3)
-    { pos: [-1, -1, -1], norm: [0, 0, -1], uv: [1, 1] }, // 21 (6)
-    { pos: [-1, 3, -1], norm: [0, 0, -1], uv: [0, 1] }, // 22 (4)
-    { pos: [1, 3, -1], norm: [0, 0, -1], uv: [0, 0] }, // 23 (1)
+    new THREE.Vector3(-1, -1, 1), // 7
+    new THREE.Vector3(-1, 3, 1), // 5
+    new THREE.Vector3(-1, -1, -1), // 6
+
+    new THREE.Vector3(-1, -1, -1), // 6
+    new THREE.Vector3(-1, 3, 1), // 5
+    new THREE.Vector3(-1, 3, -1), // 4
+
+    new THREE.Vector3(1, -1, 1), // 2
+    new THREE.Vector3(-1, -1, 1), // 7
+    new THREE.Vector3(1, -1, -1), // 3
+
+    new THREE.Vector3(1, -1, -1), // 3
+    new THREE.Vector3(-1, -1, 1), // 7
+    new THREE.Vector3(-1, -1, -1), // 6
+
+    new THREE.Vector3(-1, 3, 1), // 5
+    new THREE.Vector3(-1, -1, 1), // 7
+    new THREE.Vector3(1, 3, 1), // 0
+
+    new THREE.Vector3(1, 3, 1), // 0
+    new THREE.Vector3(-1, -1, 1), // 7
+    new THREE.Vector3(1, -1, 1), // 2
+
+    new THREE.Vector3(1, -1, -1), // 3
+    new THREE.Vector3(-1, -1, -1), // 6
+    new THREE.Vector3(1, 3, -1), // 1
+
+    new THREE.Vector3(1, 3, -1), // 1
+    new THREE.Vector3(-1, -1, -1), // 6
+    new THREE.Vector3(-1, 3, -1), // 4
   ]
-  const positions: number[] = []
-  const normals: number[] = []
-  const uvs: number[] = []
-  vertices.map((vertex) => {
-    positions.push(...vertex.pos)
-    normals.push(...vertex.norm)
-    uvs.push(...vertex.uv)
-  })
-  geom.setAttribute('position', new THREE.BufferAttribute(new Float32Array(positions), 3))
-  geom.setAttribute('normal', new THREE.BufferAttribute(new Float32Array(normals), 3))
-  geom.setAttribute('uv', new THREE.BufferAttribute(new Float32Array(uvs), 2))
-  geom.setIndex([
-    0, 2, 3, 0, 3, 1,
+  const pointIndex = [
+    3, 0, 2,
 
-    7, 4, 5, 7, 5, 6,
+    1, 0, 3,
 
-    8, 9, 10, 8, 10, 11,
+    5, 0, 4,
 
-    12, 13, 14, 12, 14, 15,
+    4, 0, 1,
 
-    17, 19, 16, 17, 18, 19,
+    7, 5, 6,
 
-    20, 21, 22, 20, 22, 23,
-  ])
+    6, 5, 4,
+
+    2, 7, 3,
+
+    3, 7, 6,
+
+    5, 7, 0,
+
+    0, 7, 2,
+
+    3, 6, 1,
+
+    1, 6, 4,
+  ]
+  geom.setFromPoints(points)
+
   const materials = [
     new THREE.MeshLambertMaterial({ opacity: 0.6, color: 0x44ff44, transparent: true }),
     new THREE.MeshBasicMaterial({ color: 0x000000, wireframe: true }),
@@ -105,10 +131,39 @@ const Canvas = (): JSX.Element => {
   })
   scene.add(mesh)
 
+  const addControl = (x: number, y: number, z: number) => {
+    const controls = { x: 0, y: 0, z: 0 }
+    controls.x = x
+    controls.y = y
+    controls.z = z
+
+    return controls
+  }
+
+  const controlPoints: { x: number; y: number; z: number }[] = useMemo(() => [], []) // useMemo の中で空の配列を定義しているだけ
+  controlPoints.push(addControl(3, 5, 3)) // 0
+  controlPoints.push(addControl(3, 5, 0)) // 1
+  controlPoints.push(addControl(3, 0, 3)) // 2
+  controlPoints.push(addControl(3, 0, 0)) // 3
+  controlPoints.push(addControl(0, 5, 0)) // 4
+  controlPoints.push(addControl(0, 5, 3)) // 5
+  controlPoints.push(addControl(0, 0, 0)) // 6
+  controlPoints.push(addControl(0, 0, 3)) // 7
+
   useWindowResize(camera, renderer, 500)
 
   useAnimationFrame(() => {
     stats.update()
+
+    mesh.children.forEach(() => {
+      for (let i = 0; i < 36; i++) {
+        geom.attributes.position.setX(i, controlPoints[pointIndex[i]].x)
+        geom.attributes.position.setY(i, controlPoints[pointIndex[i]].y)
+        geom.attributes.position.setZ(i, controlPoints[pointIndex[i]].z)
+      }
+      geom.attributes.position.needsUpdate = true
+      geom.computeVertexNormals()
+    })
 
     renderer.render(scene, camera)
   })
@@ -117,14 +172,24 @@ const Canvas = (): JSX.Element => {
     const sceneMount = sceneMountRef.current
     const statsMount = statsMountRef.current
 
+    const gui = new dat.GUI()
+
+    for (let i = 0; i < 8; i++) {
+      const f1 = gui.addFolder(`Vertices${i + 1}`)
+      f1.add(controlPoints[i], 'x', -10, 10, 0.1)
+      f1.add(controlPoints[i], 'y', -10, 10, 0.1)
+      f1.add(controlPoints[i], 'z', -10, 10, 0.1)
+    }
+
     sceneMount?.appendChild(renderer.domElement)
     statsMount?.appendChild(stats.dom)
 
     return () => {
       sceneMount?.removeChild(renderer.domElement)
       statsMount?.removeChild(stats.dom)
+      gui.destroy()
     }
-  }, [stats.dom, renderer.domElement])
+  }, [stats.dom, renderer.domElement, controlPoints])
 
   return (
     <>
