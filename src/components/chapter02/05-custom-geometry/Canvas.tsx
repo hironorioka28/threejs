@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react'
+import { useCallback, useEffect, useMemo, useRef } from 'react'
 
 import * as dat from 'dat.gui'
 import * as THREE from 'three'
@@ -12,7 +12,7 @@ const Canvas = (): JSX.Element => {
 
   const stats = myStats()
 
-  const scene = new THREE.Scene()
+  const scene = useMemo(() => new THREE.Scene(), [])
 
   const camera = new THREE.PerspectiveCamera(45, window.innerWidth / (window.innerHeight - 48), 0.1)
   camera.position.x = -20
@@ -43,7 +43,7 @@ const Canvas = (): JSX.Element => {
   spotLight.castShadow = true
   scene.add(spotLight)
 
-  const geom = new THREE.BufferGeometry()
+  const geom = useMemo(() => new THREE.BufferGeometry(), [])
 
   const points = [
     new THREE.Vector3(1, -1, -1), // 3
@@ -150,6 +150,25 @@ const Canvas = (): JSX.Element => {
   controlPoints.push(addControl(0, 0, 0)) // 6
   controlPoints.push(addControl(0, 0, 3)) // 7
 
+  const clone = useCallback(() => {
+    const clonedGeometry = geom.clone()
+    const materials = [
+      new THREE.MeshLambertMaterial({ opacity: 0.6, color: 0xff44ff, transparent: true }),
+      new THREE.MeshBasicMaterial({ color: 0x000000, wireframe: true }),
+    ]
+
+    const mesh2 = SceneUtils.createMultiMaterialObject(clonedGeometry, materials)
+    mesh2.children.forEach((e) => {
+      e.castShadow = true
+    })
+    mesh2.translateX(5)
+    mesh2.translateZ(5)
+    mesh2.name = 'clone'
+    const sceneObj = scene.getObjectByName('clone')
+    sceneObj && scene.remove(sceneObj)
+    scene.add(mesh2)
+  }, [geom, scene])
+
   useWindowResize(camera, renderer, 500)
 
   useAnimationFrame(() => {
@@ -174,6 +193,8 @@ const Canvas = (): JSX.Element => {
 
     const gui = new dat.GUI()
 
+    gui.add({ clone }, 'clone')
+
     for (let i = 0; i < 8; i++) {
       const f1 = gui.addFolder(`Vertices${i + 1}`)
       f1.add(controlPoints[i], 'x', -10, 10, 0.1)
@@ -189,7 +210,7 @@ const Canvas = (): JSX.Element => {
       statsMount?.removeChild(stats.dom)
       gui.destroy()
     }
-  }, [stats.dom, renderer.domElement, controlPoints])
+  }, [stats.dom, renderer.domElement, clone, controlPoints])
 
   return (
     <>
