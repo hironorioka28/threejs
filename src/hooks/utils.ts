@@ -2,6 +2,7 @@ import { useState, useRef, useCallback, useEffect } from 'react'
 
 import * as dat from 'dat.gui'
 import Stats from 'stats.js'
+import * as THREE from 'three'
 
 export const useAnimationFrame = (callback: () => void) => {
   const requestRef = useRef<ReturnType<typeof requestAnimationFrame>>()
@@ -66,12 +67,19 @@ export const useDebounce = (callback: () => void, ms: number) => {
 }
 
 export const useWindowResize = (
-  camera: THREE.PerspectiveCamera,
+  camera: THREE.PerspectiveCamera | THREE.OrthographicCamera,
   renderer: THREE.WebGLRenderer,
   interval: number,
 ) => {
   const onResize = () => {
-    camera.aspect = window.innerWidth / (window.innerHeight - 48)
+    if (camera instanceof THREE.PerspectiveCamera) {
+      camera.aspect = window.innerWidth / (window.innerHeight - 48)
+    } else {
+      camera.left = window.innerWidth / -16
+      camera.right = window.innerWidth / 16
+      camera.top = (window.innerHeight - 48) / 16
+      camera.bottom = (window.innerHeight - 48) / -16
+    }
     camera.updateProjectionMatrix()
     renderer.setSize(window.innerWidth, window.innerHeight - 48)
   }

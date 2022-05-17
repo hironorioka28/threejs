@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef } from 'react'
 import * as dat from 'dat.gui'
 import * as THREE from 'three'
 
-import { myStats, useAnimationFrame } from '@hooks/utils'
+import { myStats, useAnimationFrame, useWindowResize } from '@hooks/utils'
 
 const Canvas = (): JSX.Element => {
   const sceneMountRef = useRef<HTMLDivElement>(null)
@@ -96,6 +96,8 @@ const Canvas = (): JSX.Element => {
       },
     }
   }, [])
+
+  useWindowResize(cameraRef.current, renderer, 500)
 
   useAnimationFrame(() => {
     stats.update()
