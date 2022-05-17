@@ -75,6 +75,7 @@ export const useWindowResize = (
     if (camera instanceof THREE.PerspectiveCamera) {
       camera.aspect = window.innerWidth / (window.innerHeight - 48)
     } else {
+      // TODO: リサイズするとオブジェクトのアスペクト比がおかしくなる
       camera.left = window.innerWidth / -16
       camera.right = window.innerWidth / 16
       camera.top = (window.innerHeight - 48) / 16
