@@ -53,19 +53,18 @@ export const myStats = () => {
   return s
 }
 
-export const useDebounce = (callback: () => void, ms: number) => {
-  const timerRef = useRef<number>(0)
+export const debounce = (callback: () => void, ms: number) => {
+  let timer = 0
 
-  const debounce = useCallback(() => {
-    window.clearTimeout(timerRef.current)
-    timerRef.current = window.setTimeout(() => {
+  return () => {
+    window.clearTimeout(timer)
+    timer = window.setTimeout(() => {
       callback()
     }, ms)
-  }, [callback, ms])
-
-  return debounce
+  }
 }
 
+// Hook: 画面を表示後にカメラの種類を替えない場合
 export const useWindowResize = (
   camera: THREE.PerspectiveCamera | THREE.OrthographicCamera,
   renderer: THREE.WebGLRenderer,
@@ -74,22 +73,46 @@ export const useWindowResize = (
   const onResize = () => {
     if (camera instanceof THREE.PerspectiveCamera) {
       camera.aspect = window.innerWidth / (window.innerHeight - 48)
-    } else {
+    } else if (camera instanceof THREE.OrthographicCamera) {
       // TODO: リサイズするとオブジェクトのアスペクト比がおかしくなる
       camera.left = window.innerWidth / -16
       camera.right = window.innerWidth / 16
       camera.top = (window.innerHeight - 48) / 16
       camera.bottom = (window.innerHeight - 48) / -16
+    } else {
     }
     camera.updateProjectionMatrix()
     renderer.setSize(window.innerWidth, window.innerHeight - 48)
   }
 
-  const debounced = useDebounce(onResize, interval)
+  const debounced = debounce(onResize, interval)
   useEffect(() => {
     window.addEventListener('resize', debounced, false)
     return () => {
       window.removeEventListener('resize', debounced, false)
     }
   }, [debounced])
+}
+
+// without Hook: 画面を表示後にカメラを切り替えることがある場合
+export const windowResize = (
+  camera: THREE.PerspectiveCamera | THREE.OrthographicCamera,
+  renderer: THREE.WebGLRenderer,
+  interval: number,
+) => {
+  const onResize = () => {
+    if (camera instanceof THREE.PerspectiveCamera) {
+      camera.aspect = window.innerWidth / (window.innerHeight - 48)
+    } else if (camera instanceof THREE.OrthographicCamera) {
+      camera.left = window.innerWidth / -16
+      camera.right = window.innerWidth / 16
+      camera.top = (window.innerHeight - 48) / 16
+      camera.bottom = (window.innerHeight - 48) / -16
+    } else {
+    }
+    camera.updateProjectionMatrix()
+    renderer.setSize(window.innerWidth, window.innerHeight - 48)
+  }
+
+  window.addEventListener('resize', debounce(onResize, interval), false)
 }

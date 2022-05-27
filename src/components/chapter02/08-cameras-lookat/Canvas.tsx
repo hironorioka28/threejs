@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef } from 'react'
 import * as dat from 'dat.gui'
 import * as THREE from 'three'
 
-import { myStats, useAnimationFrame, useWindowResize } from '@hooks/utils'
+import { myStats, useAnimationFrame, windowResize } from '@hooks/utils'
 
 const Canvas = (): JSX.Element => {
   const sceneMountRef = useRef<HTMLDivElement>(null)
@@ -21,7 +21,7 @@ const Canvas = (): JSX.Element => {
   cameraRef.current.position.y = 60
   cameraRef.current.position.z = 180
 
-  const renderer = new THREE.WebGLRenderer()
+  const renderer = useMemo(() => new THREE.WebGLRenderer(), [])
   renderer.setClearColor(new THREE.Color(0xeeeeee), 1.0)
   renderer.setSize(window.innerWidth, window.innerHeight - 48)
   renderer.shadowMap.enabled = true
@@ -94,11 +94,10 @@ const Canvas = (): JSX.Element => {
           cameraRef.current.lookAt(cameraRef.current.position)
           controls.perspective = 'Perspective'
         }
+        windowResize(cameraRef.current, renderer, 500)
       },
     }
-  }, [])
-
-  useWindowResize(cameraRef.current, renderer, 500)
+  }, [renderer])
 
   useAnimationFrame(() => {
     stats.update()
@@ -123,12 +122,13 @@ const Canvas = (): JSX.Element => {
     sceneMount?.appendChild(renderer.domElement)
     statsMount?.appendChild(stats.dom)
 
+    windowResize(cameraRef.current, renderer, 500)
     return () => {
       sceneMount?.removeChild(renderer.domElement)
       statsMount?.removeChild(stats.dom)
       gui.destroy()
     }
-  }, [stats.dom, renderer.domElement, controls, scene.position])
+  }, [stats.dom, renderer.domElement, controls, scene.position, renderer])
 
   return (
     <>
