@@ -32,11 +32,9 @@ const Canvas = (): JSX.Element => {
 
   const scene = new THREE.Scene()
 
-  const camera = new THREE.PerspectiveCamera(
-    45,
-    window.innerWidth / (window.innerHeight - 48),
-    0.1,
-    1000,
+  const camera = useMemo(
+    () => new THREE.PerspectiveCamera(45, window.innerWidth / (window.innerHeight - 48), 0.1, 1000),
+    [],
   )
   camera.position.x = -35
   camera.position.y = 30
@@ -89,7 +87,7 @@ const Canvas = (): JSX.Element => {
   const ambientLight = useMemo(() => new THREE.AmbientLight(ambiColorRef.current), [])
   scene.add(ambientLight)
 
-  const spotLight0 = new THREE.SpotLight(0xcccccc)
+  const spotLight0 = useMemo(() => new THREE.SpotLight(0xcccccc), [])
   spotLight0.position.set(-40, 30, -10)
   spotLight0.lookAt(plane.position)
   scene.add(spotLight0)
