@@ -10,7 +10,7 @@ const Canvas = dynamic(() => import('@components/chapter03/03-spot-light/Canvas'
 const SpotLight: NextPage = () => {
   return (
     <>
-      <Header pageTitle="Chapter03 / 02-point-light" />
+      <Header pageTitle="Chapter03 / 03-spot-light" />
       <main>
         <Canvas />
       </main>
