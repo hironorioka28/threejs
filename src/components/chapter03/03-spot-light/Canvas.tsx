@@ -191,6 +191,7 @@ const Canvas = (): JSX.Element => {
     gui.add(datGuiControls, 'debug').onChange((e) => (cameraHelper.visible = e))
     gui.add(datGuiControls, 'castShadow').onChange((e) => (spotLight.castShadow = e))
     gui.add(datGuiControls, 'target', ['Plane', 'Sphere', 'Cube']).onChange((e) => {
+      // eslint-disable-next-line no-console
       console.log(e)
       switch (e) {
         case 'Plane':
