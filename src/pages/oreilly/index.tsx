@@ -84,6 +84,12 @@ const Oreilly: NextPage = () => {
                 <a className="text-teal-700">hemisphere-light</a>
               </NextLink>
             </li>
+            <li className="text-gray-700">area-right (deprecated)</li>
+            <li>
+              <NextLink href={'/oreilly/3-7-lensflares'}>
+                <a className="text-teal-700">lensflares</a>
+              </NextLink>
+            </li>
           </ul>
         </li>
       </ul>
