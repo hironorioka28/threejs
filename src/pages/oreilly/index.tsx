@@ -92,6 +92,16 @@ const Oreilly: NextPage = () => {
             </li>
           </ul>
         </li>
+        <li>
+          <p className="text-gray-700">Chapter 04</p>
+          <ul className="list-inside list-decimal space-y-4 mt-4">
+            <li>
+              <NextLink href={'/oreilly/4-1-basic-mesh-material'}>
+                <a className="text-teal-700">basic-mesh-material</a>
+              </NextLink>
+            </li>
+          </ul>
+        </li>
       </ul>
     </div>
   )
