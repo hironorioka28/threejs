@@ -7,7 +7,7 @@ const Canvas = dynamic(() => import('@components/chapter04/01-basic-mesh-materia
   ssr: false,
 })
 
-const Lensflares: NextPage = () => {
+const BasicMeshMaterial: NextPage = () => {
   return (
     <>
       <Header pageTitle="Chapter04 / 01-basic-mesh-material" />
@@ -18,4 +18,4 @@ const Lensflares: NextPage = () => {
   )
 }
 
-export default Lensflares
+export default BasicMeshMaterial
