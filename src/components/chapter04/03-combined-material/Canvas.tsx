@@ -2,6 +2,7 @@ import { useRef, useEffect, useMemo } from 'react'
 
 import * as dat from 'dat.gui'
 import * as THREE from 'three'
+import * as SceneUtils from 'three/examples/jsm/utils/SceneUtils'
 
 import { myStats, useAnimationFrame, useWindowResize } from '@hooks/utils'
 
@@ -11,11 +12,11 @@ const Canvas = (): JSX.Element => {
 
   const rotationSpeedRef = useRef<number>(0.02)
   const numberOfObjectsRef = useRef<number>(0)
+  const colorRef = useRef<number>(0x00ff00)
 
   const defaultNumberOfObjectsRef = useRef<number>(10)
 
   const scene = useMemo(() => new THREE.Scene(), [])
-  scene.overrideMaterial = useMemo(() => new THREE.MeshDepthMaterial(), [])
 
   const camera = useMemo(
     () => new THREE.PerspectiveCamera(45, window.innerWidth / (window.innerHeight - 48), 30, 170),
@@ -23,6 +24,7 @@ const Canvas = (): JSX.Element => {
   )
 
   const renderer = useMemo(() => new THREE.WebGLRenderer(), [])
+  renderer.sortObjects = false
   renderer.setClearColor(new THREE.Color(0x000000))
   renderer.setSize(window.innerWidth, window.innerHeight - 48)
   renderer.shadowMap.enabled = true
@@ -57,11 +59,12 @@ const Canvas = (): JSX.Element => {
       cameraFar: camera.far,
       rotationSpeed: rotationSpeedRef.current,
       numberOfObjects: numberOfObjectsRef.current,
+      color: colorRef.current,
 
       removeCube: () => {
         const allChildren = scene.children
         const lastObject = allChildren[allChildren.length - 1]
-        if (lastObject instanceof THREE.Mesh) {
+        if (lastObject instanceof THREE.Group) {
           scene.remove(lastObject)
           numberOfObjectsRef.current = scene.children.length
         }
@@ -71,7 +74,16 @@ const Canvas = (): JSX.Element => {
         const cubeSize = Math.ceil(3 + Math.random() * 3)
         const cubeGeometry = new THREE.BoxGeometry(cubeSize, cubeSize, cubeSize)
         const cubeMaterial = new THREE.MeshDepthMaterial()
-        const cube = new THREE.Mesh(cubeGeometry, cubeMaterial)
+        const colorMaterial = new THREE.MeshBasicMaterial({
+          color: datGuiControls.color,
+          transparent: true,
+          blending: THREE.MultiplyBlending,
+        })
+        const cube = SceneUtils.createMultiMaterialObject(cubeGeometry, [
+          colorMaterial,
+          cubeMaterial,
+        ])
+        cube.children[1].scale.set(0.99, 0.99, 0.99)
         cube.castShadow = true
 
         cube.position.x = -60 + Math.round(Math.random() * 100)
@@ -97,6 +109,7 @@ const Canvas = (): JSX.Element => {
 
     const gui = new dat.GUI()
 
+    gui.addColor(datGuiControls, 'color')
     gui.add(datGuiControls, 'rotationSpeed', 0, 0.5).onChange((e) => (rotationSpeedRef.current = e))
     gui.add(datGuiControls, 'addCube')
     gui.add(datGuiControls, 'removeCube')
