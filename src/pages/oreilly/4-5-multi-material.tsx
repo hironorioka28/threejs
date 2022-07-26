@@ -10,7 +10,7 @@ const Canvas = dynamic(() => import('@components/chapter04/05-multi-material/Can
 const MultiMaterial: NextPage = () => {
   return (
     <>
-      <Header pageTitle="Chapter04 / 04-mesh-normal-material" />
+      <Header pageTitle="Chapter04 / 05-multi-material" />
       <main>
         <Canvas />
       </main>
